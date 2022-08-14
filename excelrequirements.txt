@@ -3,12 +3,10 @@ excel feature requirements
 -formule u celijama tabele
 -bojenje celija i texta
 -ubacivanje i brisanje redova i kolona
--wrap i merge text
+-wrap text i merge
 -formati celije - general, number, percentage, date
 -search
 -charts
--mozda hyperlink
--text box
 -equations
 -symbols
 -sort
