@@ -1,16 +1,21 @@
 excel feature requirements
--tabela
--formule u celijama tabele
+1. tabela
+1. unos i izmena sadrzaja celija
+1. save
+1. otvaranje fajlova
+2. formule u celijama tabele
 -bojenje celija i texta
--ubacivanje i brisanje redova i kolona
+3. ubacivanje i brisanje redova i kolona
 -wrap text i merge
--formati celije - general, number, percentage, date
+3. formati celije - general, number, percentage, date
 -search
 -charts
 -equations
 -symbols
 -sort
 -komentari
--save
--undo redo
--otvaranje fajlova
+3. undo redo
+3. detaljnije formule
+
+visicalc
+lotus123
