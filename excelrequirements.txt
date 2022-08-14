@@ -1,0 +1,18 @@
+excel feature requirements
+-tabela
+-formule u celijama tabele
+-bojenje celija i texta
+-ubacivanje i brisanje redova i kolona
+-wrap i merge text
+-formati celije - general, number, percentage, date
+-search
+-charts
+-mozda hyperlink
+-text box
+-equations
+-symbols
+-sort
+-komentari
+-save
+-undo redo
+-otvaranje fajlova
