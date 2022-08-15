@@ -26,8 +26,8 @@ namespace Spreadsheets
     /// </summary>
     public partial class MainWindow : Window
     {
-        DataTable dt = new DataTable();
-        List<DataRow> data = new List<DataRow>();
+        ObservableCollection<DataRow> data = new ObservableCollection<DataRow>();
+        List<DataRow> formulaData = new List<DataRow>();
         Stack<string [,]> listaStanja = new Stack<string[,]>();
         Stack<string[,]> listaRedo = new Stack<string[,]>();
         public MainWindow()
@@ -35,27 +35,36 @@ namespace Spreadsheets
             InitializeComponent();
             string col = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             int j = 0;
+            DataTable dt = new DataTable();
+            DataTable dt2 = new DataTable();
             for (int i = 0; i < 50; i++)
             {
                 if (i < 26)
                 {
                     dt.Columns.Add(col[i].ToString());
+                    dt2.Columns.Add(col[i].ToString());
                 }
                 else
                 {
                     string cc = col[j].ToString() + col[j].ToString();
                     dt.Columns.Add(cc);
+                    dt2.Columns.Add(cc);
                     j++;
                 }
                 dt.Rows.Add();
+                dt2.Rows.Add();
                 data.Add(dt.Rows[i]);
+                formulaData.Add(dt2.Rows[i]);
             }
             dg.ItemsSource = dt.DefaultView;
+            
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog save = new SaveFileDialog();
+            save.AddExtension = true;
+            save.Filter = "CSV Files (*.csv)|*.csv";
             if (save.ShowDialog() == true)
             {
                 string path = save.FileName;
@@ -84,6 +93,7 @@ namespace Spreadsheets
         private void Open_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "CSV Files (*.csv)|*.csv";
             if (open.ShowDialog() == true)
             {
                 string path = open.FileName;
@@ -124,7 +134,7 @@ namespace Spreadsheets
                 }
             }
             listaStanja.Push(m);
-            
+
         }
 
         private void btUndo_Click(object sender, RoutedEventArgs e)
@@ -175,6 +185,76 @@ namespace Spreadsheets
                     for (int j = 0; j < 50; j++)
                     {
                         data[i][j] = sada[i, j];
+                    }
+                }
+            }
+        }
+        void GetIndex(int rowIndex, int colIndex, string cell)
+        {
+            colIndex = cell[0] - 65;
+            if (cell.Length == 3)
+            {
+                colIndex = cell[1] - 65 + 25;
+                rowIndex = int.Parse(cell[2].ToString()) - 1;
+            }
+            else { rowIndex = int.Parse(cell[1].ToString()) - 1; }
+        }
+        void CheckFormula(string content, int i, int j)
+        {
+            if (content[0].Equals('='))
+            {
+                string formula = content.Split('(', ')')[0];
+                string operands = content.Split('(', ')')[1];
+                if (formula.ToUpper().Equals("=SUM"))
+                {
+                    string[] cells = operands.Split(',');
+                    int sum = 0;
+                    foreach (string cell in cells)
+                    {
+                        int rowIndex = 0;
+                        int colIndex = 0;
+                        GetIndex(rowIndex, colIndex, cell);
+                        sum += int.Parse(data[rowIndex][colIndex].ToString());
+                    }
+                    data[i][j] = sum;
+                    formulaData[i][j] = content;
+                }
+                else if (formula.ToUpper().Equals("=AVG"))
+                {
+
+                }
+                else if (formula.ToUpper().Equals("=MAX"))
+                {
+
+                }
+                else if (formula.ToUpper().Equals("=MIN"))
+                {
+
+                }
+            }
+        }
+
+        private void dg_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            string[,] m = new string[50, 50];
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    m[i, j] = data[i][j].ToString();
+
+                    if (!m[i, j].Equals(""))
+                    {
+                        string content = m[i, j];
+                        string fContent = formulaData[i][j].ToString();
+                        if (!fContent.Equals(""))
+                        {
+                            CheckFormula(fContent, i, j);
+                        }
+                        else
+                        {
+                            CheckFormula(content, i, j);
+                        }
                     }
                 }
             }
