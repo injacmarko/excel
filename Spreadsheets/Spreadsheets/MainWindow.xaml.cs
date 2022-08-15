@@ -17,6 +17,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using Microsoft.Win32;
 
 namespace Spreadsheets
 {
@@ -25,8 +26,8 @@ namespace Spreadsheets
     /// </summary>
     public partial class MainWindow : Window
     {
-        public DataTable dt = new DataTable();
-        public ObservableCollection<DataRow> data = new ObservableCollection<DataRow>();
+        DataTable dt = new DataTable();
+        List<DataRow> data = new List<DataRow>();
         public MainWindow()
         {
             InitializeComponent();
@@ -52,57 +53,56 @@ namespace Spreadsheets
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\Users\Marko\Desktop\sheet.txt";
-            File.WriteAllText(path, "");
-            string[,] s = new string[data.Count, 50];
-            for (int i = 0; i < s.GetLength(0); i++)
+            SaveFileDialog save = new SaveFileDialog();
+            if (save.ShowDialog() == true)
             {
-                for (int j = 0; j < s.GetLength(1); j++)
+                string path = save.FileName;
+                File.WriteAllText(path, "");
+                string[,] s = new string[data.Count, 50];
+                for (int i = 0; i < s.GetLength(0); i++)
                 {
-                    s[i, j] = data[i][j].ToString();
-                    if (s[i, j] == "")
+                    for (int j = 0; j < s.GetLength(1); j++)
                     {
-                        File.AppendAllText(path, "[");
+                        s[i, j] = data[i][j].ToString();
+                        if (s[i, j] == "")
+                        {
+                            File.AppendAllText(path, ",");
+                        }
+                        else
+                        {
+                            File.AppendAllText(path, s[i, j] + ",");
+                        }
                     }
-                    else
-                    {
-                        File.AppendAllText(path, s[i, j] + " ");
-                    }
+                    File.AppendAllText(path, "|,");
                 }
-                File.AppendAllText(path, "|");
+
             }
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\Users\Marko\Desktop\sheet.txt";
-            string s1 = File.ReadAllText(path);
-            int j = 0;
-            int k = 0;
-            for (int i = 0; i < s1.Length; i++)
+            OpenFileDialog open = new OpenFileDialog();
+            if (open.ShowDialog() == true)
             {
-                if (s1[i].Equals('['))
+                string path = open.FileName;
+                string s1 = File.ReadAllText(path);
+                string[] s2 = s1.Split(',');
+                int j = 0;
+                int k = 0;
+                for (int i = 0; i < s2.Length - 1; i++)
                 {
-                    data[j][k] = "";
-                    k++;
-                }
-                else if (s1[i].Equals('|'))
-                {
-                    k = 0;
-                    j++;
-                    continue;
-                }
-                else
-                {
-                    string el = "";
-                    while (!s1[i].Equals(' '))
+                    if (s2[i].Equals("|"))
                     {
-                        el += s1[i];
-                        i++;
+                        k = 0;
+                        j++;
                     }
-                    data[j][k] = el;
-                    k++;
+                    else
+                    {
+                        data[j][k] = s2[i];
+                        k++;
+                    }
                 }
+
             }
         }
     }
