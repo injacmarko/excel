@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <DataGrid Margin="0,25,0,0" ColumnWidth="75" HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Source=data}" Name="dg" SelectionUnit="Cell" SelectionMode="Extended"/>
+        <DataGrid Margin="0,25,0,0" LoadingRow="dg_LoadingRow" ColumnWidth="75" HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Source=data}" Name="dg" SelectionUnit="Cell" SelectionMode="Extended"/>
         <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="25" Height="25" Name="Save" Content="Save" FontSize="10" Click="Save_Click"/>
         <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="25" Height="25" Name="Open" Content="Open" FontSize="10" Click="Open_Click" Margin="30,0,0,0"/>
 
