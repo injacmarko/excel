@@ -28,6 +28,8 @@ namespace Spreadsheets
     {
         DataTable dt = new DataTable();
         List<DataRow> data = new List<DataRow>();
+        Stack<string [,]> listaStanja = new Stack<string[,]>();
+        Stack<string[,]> listaRedo = new Stack<string[,]>();
         public MainWindow()
         {
             InitializeComponent();
@@ -109,6 +111,73 @@ namespace Spreadsheets
         private void dg_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex()+ 1).ToString();
+        }
+
+        private void dg_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            string [,] m = new string[50, 50];
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    m[i, j] = data[i][j].ToString();
+                }
+            }
+            listaStanja.Push(m);
+            
+        }
+
+        private void btUndo_Click(object sender, RoutedEventArgs e)
+        {
+            string[,] sada0 = new string[50,50];
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    sada0[i,j] = data[i][j].ToString();
+                }
+            }
+
+            listaRedo.Push(sada0);
+            if (listaStanja.Count != 0)
+            {
+                string [,] sada = listaStanja.Peek();
+                
+                listaStanja.Pop();
+                for(int i = 0; i < 50; i++)
+                {
+                    for(int j = 0; j < 50; j++)
+                    {
+                        data[i][j] = sada[i,j];
+                    }
+                }
+            }
+        }
+
+        private void btRedo_Click(object sender, RoutedEventArgs e)
+        {
+            string[,] sada0 = new string[50, 50];
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    sada0[i, j] = data[i][j].ToString();
+                }
+            }
+            listaStanja.Push(sada0);
+            if (listaRedo.Count != 0)
+            {
+                string[,] sada = listaRedo.Peek();
+                listaRedo.Pop();
+
+                for (int i = 0; i < 50; i++)
+                {
+                    for (int j = 0; j < 50; j++)
+                    {
+                        data[i][j] = sada[i, j];
+                    }
+                }
+            }
         }
     }
 }

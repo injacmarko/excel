@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spreadsheets"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Spreadsheet" Height="450" Width="800">
     <Grid>
-        <DataGrid Margin="0,25,0,0" LoadingRow="dg_LoadingRow" ColumnWidth="75" HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Source=data}" Name="dg" SelectionUnit="Cell" SelectionMode="Extended"/>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="25" Height="25" Name="Save" Content="Save" FontSize="10" Click="Save_Click"/>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="25" Height="25" Name="Open" Content="Open" FontSize="10" Click="Open_Click" Margin="30,0,0,0"/>
+        <DataGrid Margin="0,30,0,0" LoadingRow="dg_LoadingRow" ColumnWidth="75" HorizontalAlignment="Left" VerticalAlignment="Top" ItemsSource="{Binding Source=data}" Name="dg" SelectionUnit="Cell" SelectionMode="Extended" CellEditEnding="dg_CellEditEnding"/>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Height="30" Name="Save" Content="Save" FontSize="10" Click="Save_Click"/>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Height="30" Name="Open" Content="Open" FontSize="10" Click="Open_Click" Margin="35,0,0,0"/>
+        <Button x:Name="btUndo" Content="Undo" HorizontalAlignment="Left" Width="30" Height="30" Margin="70,0,0,0" FontSize="10" VerticalAlignment="Top" Click="btUndo_Click"/>
+        <Button x:Name="btRedo" Content="Redo" HorizontalAlignment="Left" Width="30" Height="30" Margin="105,0,0,0" FontSize="10" VerticalAlignment="Top" Click="btRedo_Click"/>
 
     </Grid>
 </Window>

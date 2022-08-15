@@ -19,3 +19,24 @@ C:\Users\Marko\Documents\Excel Petnica\Spreadsheets\Spreadsheets\obj\Debug\net6.
 C:\Users\Marko\Documents\Excel Petnica\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.pdb
 C:\Users\Marko\Documents\Excel Petnica\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.genruntimeconfig.cache
 C:\Users\Marko\Documents\Excel Petnica\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\ref\Spreadsheets.dll
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\bin\Debug\net6.0-windows\Spreadsheets.exe
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\bin\Debug\net6.0-windows\Spreadsheets.deps.json
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\bin\Debug\net6.0-windows\Spreadsheets.runtimeconfig.json
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\bin\Debug\net6.0-windows\Spreadsheets.dll
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\bin\Debug\net6.0-windows\Spreadsheets.pdb
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.csproj.AssemblyReference.cache
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\MainWindow.g.cs
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\App.g.cs
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets_MarkupCompile.cache
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets_MarkupCompile.lref
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\MainWindow.baml
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.g.resources
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.AssemblyInfo.cs
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.dll
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\refint\Spreadsheets.dll
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.pdb
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\Spreadsheets.genruntimeconfig.cache
+C:\Users\Admin\Documents\excel\Spreadsheets\Spreadsheets\obj\Debug\net6.0-windows\ref\Spreadsheets.dll
