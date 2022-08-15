@@ -53,22 +53,57 @@ namespace Spreadsheets
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             string path = @"C:\Users\Marko\Desktop\sheet.txt";
+            File.WriteAllText(path, "");
             string[,] s = new string[data.Count, 50];
             for (int i = 0; i < s.GetLength(0); i++)
             {
                 for (int j = 0; j < s.GetLength(1); j++)
                 {
                     s[i, j] = data[i][j].ToString();
-                    File.WriteAllText(path, s[i, j]);
+                    if (s[i, j] == "")
+                    {
+                        File.AppendAllText(path, "[");
+                    }
+                    else
+                    {
+                        File.AppendAllText(path, s[i, j] + " ");
+                    }
                 }
+                File.AppendAllText(path, "|");
             }
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"C:\Users\Marko\Desktop\sheet.json";
-            ObservableCollection<DataRow> data1 = JsonSerializer.Deserialize<ObservableCollection<DataRow>>(File.ReadAllText(path))!;
-            data = data1;
+            string path = @"C:\Users\Marko\Desktop\sheet.txt";
+            string s1 = File.ReadAllText(path);
+            int j = 0;
+            int k = 0;
+            for (int i = 0; i < s1.Length; i++)
+            {
+                if (s1[i].Equals('['))
+                {
+                    data[j][k] = "";
+                    k++;
+                }
+                else if (s1[i].Equals('|'))
+                {
+                    k = 0;
+                    j++;
+                    continue;
+                }
+                else
+                {
+                    string el = "";
+                    while (!s1[i].Equals(' '))
+                    {
+                        el += s1[i];
+                        i++;
+                    }
+                    data[j][k] = el;
+                    k++;
+                }
+            }
         }
     }
 }
