@@ -148,6 +148,10 @@ namespace Spreadsheets
 
         private void dg_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            if (e.EditingElement.ToString()[0] != '=')
+            {
+                formulaData[e.Row.GetIndex()][e.Column.DisplayIndex] = "";
+            }
             string [,] m = new string[50, 50];
             for (int i = 0; i < 50; i++)
             {
@@ -215,9 +219,12 @@ namespace Spreadsheets
         int GetColIndex(string cell)
         {
             int colIndex = cell[0] - 65;
-            if (cell.Length == 3)
+            if (cell.Length == 3 || cell.Length == 4)
             {
-                colIndex = cell[1] - 65 + 25;
+                if (!int.TryParse(cell[1].ToString(), out int x))
+                {
+                    colIndex = cell[1] - 65 + 26;
+                }
             }
             return colIndex;
         }
@@ -226,7 +233,18 @@ namespace Spreadsheets
             int rowIndex;
             if (cell.Length == 3)
             {
-                rowIndex = int.Parse(cell[2].ToString()) - 1;
+                if (int.TryParse(cell[1].ToString(), out int x))
+                {
+                    rowIndex = int.Parse(cell.Substring(1)) - 1;
+                }
+                else
+                {
+                    rowIndex = int.Parse(cell[2].ToString()) - 1;
+                }
+            }
+            else if (cell.Length == 4)
+            {
+                rowIndex = int.Parse(cell.Substring(2)) - 1;
             }
             else { rowIndex = int.Parse(cell[1].ToString()) - 1; }
             return rowIndex;
@@ -237,6 +255,7 @@ namespace Spreadsheets
             {
                 string formula = content.Split('(', ')')[0];
                 string operands = content.Split('(', ')')[1];
+                bool isCircular = false;
                 if (formula.ToUpper().Equals("=SUM"))
                 {
                     string[] cells = operands.Split(',');
@@ -253,13 +272,25 @@ namespace Spreadsheets
                             int colIndex = 0;
                             colIndex = GetColIndex(cell);
                             rowIndex = GetRowIndex(cell);
+                            isCircular = CheckIfCircular(i, j, rowIndex, colIndex);
+                            if (colIndex == j && rowIndex == i)
+                            {
+                                isCircular = true;
+                            }
                             if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue))
                             {
                                 sum += cellValue;
                             }
                         }
                     }
-                    data[i][j] = sum;
+                    if (isCircular)
+                    {
+                        data[i][j] = 0;
+                    }
+                    else
+                    {
+                        data[i][j] = sum;
+                    }
                     formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=SUMRANGE"))
@@ -272,6 +303,11 @@ namespace Spreadsheets
                     {
                         indexes[k, 0] = GetColIndex(cell);
                         indexes[k, 1] = GetRowIndex(cell);
+                        isCircular = CheckIfCircular(i, j, indexes[k, 1], indexes[k, 0]);
+                        if (indexes[k, 0] == j && indexes[k, 1] == i)
+                        {
+                            isCircular = true;
+                        }
                         k++;
                     }
                     for (int n = indexes[0, 0]; n <= indexes[1, 0]; n++)
@@ -284,7 +320,14 @@ namespace Spreadsheets
                             }
                         }
                     }
-                    data[i][j] = sum;
+                    if (isCircular)
+                    {
+                        data[i][j] = 0;
+                    }
+                    else
+                    {
+                        data[i][j] = sum;
+                    }
                     formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=AVG"))
@@ -303,6 +346,11 @@ namespace Spreadsheets
                             int colIndex = 0;
                             colIndex = GetColIndex(cell);
                             rowIndex = GetRowIndex(cell);
+                            isCircular = CheckIfCircular(i, j, rowIndex, colIndex);
+                            if (colIndex == j && rowIndex == i)
+                            {
+                                isCircular = true;
+                            }
                             if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue))
                             {
                                 avg += cellValue;
@@ -310,7 +358,14 @@ namespace Spreadsheets
                         }
                     }
                     avg /= cells.Length;
-                    data[i][j] = avg;
+                    if (isCircular)
+                    {
+                        data[i][j] = 0;
+                    }
+                    else
+                    {
+                        data[i][j] = avg;
+                    }
                     formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=MAX"))
@@ -330,6 +385,11 @@ namespace Spreadsheets
                             int colIndex = 0;
                             colIndex = GetColIndex(cell);
                             rowIndex = GetRowIndex(cell);
+                            isCircular = CheckIfCircular(i, j, rowIndex, colIndex);
+                            if (colIndex == j && rowIndex == i)
+                            {
+                                isCircular = true;
+                            }
                             if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue1))
                             {
                                 cellValues[count] = cellValue1;
@@ -337,12 +397,19 @@ namespace Spreadsheets
                         }
                         count++;
                     }
-                    int max = 0;
+                    float max = 0;
                     foreach (int cellValue in cellValues)
                     {
                         max = Math.Max(max, cellValue);
                     }
-                    data[i][j] = max;
+                    if (isCircular)
+                    {
+                        data[i][j] = 0;
+                    }
+                    else
+                    {
+                        data[i][j] = max;
+                    }
                     formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=MIN"))
@@ -362,6 +429,11 @@ namespace Spreadsheets
                             int colIndex = 0;
                             colIndex = GetColIndex(cell);
                             rowIndex = GetRowIndex(cell);
+                            isCircular = CheckIfCircular(i, j, rowIndex, colIndex);
+                            if (colIndex == j && rowIndex == i)
+                            {
+                                isCircular = true;
+                            }
                             if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue1))
                             {
                                 cellValues[count] = cellValue1;
@@ -374,10 +446,33 @@ namespace Spreadsheets
                     {
                         min = Math.Min(min, cellValue);
                     }
-                    data[i][j] = min;
+                    if (isCircular)
+                    {
+                        data[i][j] = 0;
+                    }
+                    else
+                    {
+                        data[i][j] = min;
+                    }
                     formulaData[i][j] = content;
                 }
             }
+        }
+        bool CheckIfCircular(int i, int j, int x, int y)
+        {
+            string fContent = formulaData[x][y].ToString();
+            if (!(fContent.Equals("")))
+            {
+                string[] operands = fContent.Split('(', ')')[1].Split(',');
+                foreach (string operand in operands)
+                {
+                    if (GetColIndex(operand) == j && GetRowIndex(operand) == i)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void dg_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
