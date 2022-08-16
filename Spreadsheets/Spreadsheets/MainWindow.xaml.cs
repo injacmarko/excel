@@ -189,15 +189,23 @@ namespace Spreadsheets
                 }
             }
         }
-        void GetIndex(int rowIndex, int colIndex, string cell)
+        int GetColIndex(int colIndex, string cell)
         {
             colIndex = cell[0] - 65;
             if (cell.Length == 3)
             {
                 colIndex = cell[1] - 65 + 25;
+            }
+            return colIndex;
+        }
+        int GetRowIndex(int rowIndex, string cell)
+        {
+            if (cell.Length == 3)
+            {
                 rowIndex = int.Parse(cell[2].ToString()) - 1;
             }
             else { rowIndex = int.Parse(cell[1].ToString()) - 1; }
+            return rowIndex;
         }
         void CheckFormula(string content, int i, int j)
         {
@@ -213,7 +221,8 @@ namespace Spreadsheets
                     {
                         int rowIndex = 0;
                         int colIndex = 0;
-                        GetIndex(rowIndex, colIndex, cell);
+                        colIndex = GetColIndex(colIndex, cell);
+                        rowIndex = GetRowIndex(rowIndex, cell);
                         sum += int.Parse(data[rowIndex][colIndex].ToString());
                     }
                     data[i][j] = sum;
