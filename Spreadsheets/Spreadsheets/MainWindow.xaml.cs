@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Microsoft.Win32;
+using System.Runtime.Intrinsics.X86;
 
 namespace Spreadsheets
 {
@@ -211,17 +212,18 @@ namespace Spreadsheets
                 }
             }
         }
-        int GetColIndex(int colIndex, string cell)
+        int GetColIndex(string cell)
         {
-            colIndex = cell[0] - 65;
+            int colIndex = cell[0] - 65;
             if (cell.Length == 3)
             {
                 colIndex = cell[1] - 65 + 25;
             }
             return colIndex;
         }
-        int GetRowIndex(int rowIndex, string cell)
+        int GetRowIndex(string cell)
         {
+            int rowIndex;
             if (cell.Length == 3)
             {
                 rowIndex = int.Parse(cell[2].ToString()) - 1;
@@ -241,18 +243,49 @@ namespace Spreadsheets
                     float sum = 0;
                     foreach (string cell in cells)
                     {
-                        int rowIndex = 0;
-                        int colIndex = 0;
-                        colIndex = GetColIndex(colIndex, cell);
-                        rowIndex = GetRowIndex(rowIndex, cell);
-                        sum += float.Parse(data[rowIndex][colIndex].ToString());
+                        if (float.TryParse(cell, out float cellV))
+                        {
+                            sum += cellV;
+                        }
+                        else
+                        {
+                            int rowIndex = 0;
+                            int colIndex = 0;
+                            colIndex = GetColIndex(cell);
+                            rowIndex = GetRowIndex(cell);
+                            if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue))
+                            {
+                                sum += cellValue;
+                            }
+                        }
                     }
                     data[i][j] = sum;
                     formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=SUMRANGE"))
                 {
-
+                    string[] cells = operands.Split(':');
+                    float sum = 0;
+                    int[,] indexes = new int[2,2];
+                    int k = 0;
+                    foreach (string cell in cells)
+                    {
+                        indexes[k, 0] = GetColIndex(cell);
+                        indexes[k, 1] = GetRowIndex(cell);
+                        k++;
+                    }
+                    for (int n = indexes[0, 0]; n <= indexes[1, 0]; n++)
+                    {
+                        for (int m = indexes[0, 1]; m <= indexes[1, 1]; m++)
+                        {
+                            if (float.TryParse(data[m][n].ToString(), out float cellValue))
+                            {
+                                sum += cellValue;
+                            }
+                        }
+                    }
+                    data[i][j] = sum;
+                    formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=AVG"))
                 {
@@ -260,11 +293,21 @@ namespace Spreadsheets
                     float avg = 0;
                     foreach (string cell in cells)
                     {
-                        int rowIndex = 0;
-                        int colIndex = 0;
-                        colIndex = GetColIndex(colIndex, cell);
-                        rowIndex = GetRowIndex(rowIndex, cell);
-                        avg += int.Parse(data[rowIndex][colIndex].ToString());
+                        if (float.TryParse(cell, out float cellV))
+                        {
+                            avg += cellV;
+                        }
+                        else
+                        {
+                            int rowIndex = 0;
+                            int colIndex = 0;
+                            colIndex = GetColIndex(cell);
+                            rowIndex = GetRowIndex(cell);
+                            if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue))
+                            {
+                                avg += cellValue;
+                            }
+                        }
                     }
                     avg /= cells.Length;
                     data[i][j] = avg;
@@ -273,15 +316,25 @@ namespace Spreadsheets
                 else if (formula.ToUpper().Equals("=MAX"))
                 {
                     string[] cells = operands.Split(',');
-                    int[] cellValues = new int[cells.Length];
+                    float[] cellValues = new float[cells.Length];
                     int count = 0;
                     foreach (string cell in cells)
                     {
-                        int rowIndex = 0;
-                        int colIndex = 0;
-                        colIndex = GetColIndex(colIndex, cell);
-                        rowIndex = GetRowIndex(rowIndex, cell);
-                        cellValues[count] = int.Parse(data[rowIndex][colIndex].ToString());
+                        if (float.TryParse(cell, out float cellV))
+                        {
+                            cellValues[count] += cellV;
+                        }
+                        else
+                        {
+                            int rowIndex = 0;
+                            int colIndex = 0;
+                            colIndex = GetColIndex(cell);
+                            rowIndex = GetRowIndex(cell);
+                            if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue1))
+                            {
+                                cellValues[count] = cellValue1;
+                            }
+                        }
                         count++;
                     }
                     int max = 0;
@@ -295,18 +348,28 @@ namespace Spreadsheets
                 else if (formula.ToUpper().Equals("=MIN"))
                 {
                     string[] cells = operands.Split(',');
-                    int[] cellValues = new int[cells.Length];
+                    float[] cellValues = new float[cells.Length];
                     int count = 0;
                     foreach (string cell in cells)
                     {
-                        int rowIndex = 0;
-                        int colIndex = 0;
-                        colIndex = GetColIndex(colIndex, cell);
-                        rowIndex = GetRowIndex(rowIndex, cell);
-                        cellValues[count] = int.Parse(data[rowIndex][colIndex].ToString());
+                        if (float.TryParse(cell, out float cellV))
+                        {
+                            cellValues[count] += cellV;
+                        }
+                        else
+                        {
+                            int rowIndex = 0;
+                            int colIndex = 0;
+                            colIndex = GetColIndex(cell);
+                            rowIndex = GetRowIndex(cell);
+                            if (float.TryParse(data[rowIndex][colIndex].ToString(), out float cellValue1))
+                            {
+                                cellValues[count] = cellValue1;
+                            }
+                        }
                         count++;
                     }
-                    int min = cellValues[0];
+                    float min = cellValues[0];
                     foreach (int cellValue in cellValues)
                     {
                         min = Math.Min(min, cellValue);
