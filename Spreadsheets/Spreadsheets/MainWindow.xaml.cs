@@ -26,7 +26,7 @@ namespace Spreadsheets
     /// </summary>
     public partial class MainWindow : Window
     {
-        ObservableCollection<DataRow> data = new ObservableCollection<DataRow>();
+        List<DataRow> data = new List<DataRow>();
         List<DataRow> formulaData = new List<DataRow>();
         Stack<string [,]> listaStanja = new Stack<string[,]>();
         Stack<string[,]> listaRedo = new Stack<string[,]>();
@@ -60,6 +60,26 @@ namespace Spreadsheets
             
         }
 
+        void WriteFile(List<DataRow> data, string path)
+        {
+            string[,] s = new string[data.Count, 50];
+            for (int i = 0; i < s.GetLength(0); i++)
+            {
+                for (int j = 0; j < s.GetLength(1); j++)
+                {
+                    s[i, j] = data[i][j].ToString();
+                    if (s[i, j] == "")
+                    {
+                        File.AppendAllText(path, "/,");
+                    }
+                    else
+                    {
+                        File.AppendAllText(path, s[i, j] + "/,");
+                    }
+                }
+                File.AppendAllText(path, "/|/,");
+            }
+        }
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog save = new SaveFileDialog();
@@ -69,24 +89,8 @@ namespace Spreadsheets
             {
                 string path = save.FileName;
                 File.WriteAllText(path, "");
-                string[,] s = new string[data.Count, 50];
-                for (int i = 0; i < s.GetLength(0); i++)
-                {
-                    for (int j = 0; j < s.GetLength(1); j++)
-                    {
-                        s[i, j] = data[i][j].ToString();
-                        if (s[i, j] == "")
-                        {
-                            File.AppendAllText(path, ",");
-                        }
-                        else
-                        {
-                            File.AppendAllText(path, s[i, j] + ",");
-                        }
-                    }
-                    File.AppendAllText(path, "|,");
-                }
-
+                WriteFile(data, path);
+                WriteFile(formulaData, path);
             }
         }
 
@@ -98,20 +102,38 @@ namespace Spreadsheets
             {
                 string path = open.FileName;
                 string s1 = File.ReadAllText(path);
-                string[] s2 = s1.Split(',');
+                string[] s2 = s1.Split("/,");
                 int j = 0;
                 int k = 0;
+                int l = 0;
+                int m = 0;
                 for (int i = 0; i < s2.Length - 1; i++)
                 {
-                    if (s2[i].Equals("|"))
+                    if (j < 50)
                     {
-                        k = 0;
-                        j++;
+                        if (s2[i].Equals("/|"))
+                        {
+                            k = 0;
+                            j++;
+                        }
+                        else
+                        {
+                            data[j][k] = s2[i];
+                            k++;
+                        }
                     }
                     else
                     {
-                        data[j][k] = s2[i];
-                        k++;
+                        if (s2[i].Equals("/|"))
+                        {
+                            l = 0;
+                            m++;
+                        }
+                        else
+                        {
+                            formulaData[m][l] = s2[i];
+                            l++;
+                        }
                     }
                 }
 
@@ -216,29 +238,81 @@ namespace Spreadsheets
                 if (formula.ToUpper().Equals("=SUM"))
                 {
                     string[] cells = operands.Split(',');
-                    int sum = 0;
+                    float sum = 0;
                     foreach (string cell in cells)
                     {
                         int rowIndex = 0;
                         int colIndex = 0;
                         colIndex = GetColIndex(colIndex, cell);
                         rowIndex = GetRowIndex(rowIndex, cell);
-                        sum += int.Parse(data[rowIndex][colIndex].ToString());
+                        sum += float.Parse(data[rowIndex][colIndex].ToString());
                     }
                     data[i][j] = sum;
                     formulaData[i][j] = content;
                 }
-                else if (formula.ToUpper().Equals("=AVG"))
+                else if (formula.ToUpper().Equals("=SUMRANGE"))
                 {
 
+                }
+                else if (formula.ToUpper().Equals("=AVG"))
+                {
+                    string[] cells = operands.Split(',');
+                    float avg = 0;
+                    foreach (string cell in cells)
+                    {
+                        int rowIndex = 0;
+                        int colIndex = 0;
+                        colIndex = GetColIndex(colIndex, cell);
+                        rowIndex = GetRowIndex(rowIndex, cell);
+                        avg += int.Parse(data[rowIndex][colIndex].ToString());
+                    }
+                    avg /= cells.Length;
+                    data[i][j] = avg;
+                    formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=MAX"))
                 {
-
+                    string[] cells = operands.Split(',');
+                    int[] cellValues = new int[cells.Length];
+                    int count = 0;
+                    foreach (string cell in cells)
+                    {
+                        int rowIndex = 0;
+                        int colIndex = 0;
+                        colIndex = GetColIndex(colIndex, cell);
+                        rowIndex = GetRowIndex(rowIndex, cell);
+                        cellValues[count] = int.Parse(data[rowIndex][colIndex].ToString());
+                        count++;
+                    }
+                    int max = 0;
+                    foreach (int cellValue in cellValues)
+                    {
+                        max = Math.Max(max, cellValue);
+                    }
+                    data[i][j] = max;
+                    formulaData[i][j] = content;
                 }
                 else if (formula.ToUpper().Equals("=MIN"))
                 {
-
+                    string[] cells = operands.Split(',');
+                    int[] cellValues = new int[cells.Length];
+                    int count = 0;
+                    foreach (string cell in cells)
+                    {
+                        int rowIndex = 0;
+                        int colIndex = 0;
+                        colIndex = GetColIndex(colIndex, cell);
+                        rowIndex = GetRowIndex(rowIndex, cell);
+                        cellValues[count] = int.Parse(data[rowIndex][colIndex].ToString());
+                        count++;
+                    }
+                    int min = cellValues[0];
+                    foreach (int cellValue in cellValues)
+                    {
+                        min = Math.Min(min, cellValue);
+                    }
+                    data[i][j] = min;
+                    formulaData[i][j] = content;
                 }
             }
         }
